@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .content{
+      width: 900px;
+      margin: 60px auto;
+      border: 1px solid red;
+      position: relative;
+    }
+
+    #canvas{
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .controls{
+      text-align: center;
+    }
+    input{
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="content">
+      <canvas id="canvas"></canvas>
+      <video id="video" width="900" height="auto" controls src="https://vd2.bdstatic.com/mda-mi0dvk6y4pkvr3u6/720p/h264/1630489668701248880/mda-mi0dvk6y4pkvr3u6.mp4?v_from_s=hkapp-haokan-nanjing&auth_key=1650967656-0-0-75aa0046a688dea58644c77c9e991ab7&bcevod_channel=searchbox_feed&pd=1&cd=0&pt=3&logid=2256874737&vid=2427175707309841443&abtest=100815_2-101454_2-101830_2-17451_1&klogid=2256874737" ></video>
+    </div>
+    <div class="controls">
+      <input id="ipt" placeholder="请输入弹幕"/>
+      <input id="colorIpt" value="#cccccc" type="color" />
+      <input id="fontIpt" min="20" max="60" value="26" type="range" />
+      <button id="submit">点击发送</button>
+    </div>
+  </div>
+  <script src="./index.js"></script>
+  <script>
+
+   
+
+    /**
+     * valve  弹幕内容
+     * fontSize 字体大小
+     * color    弹幕颜色
+     * time     弹幕出现时间
+     * speed    弹幕速度
+    */
+    function getData(len){
+      let data = [];
+      for(let i = 0; i < len; i++){
+        data.push({
+          value: `第 ${i} 条弹幕`,
+          fontSize: 26,
+          color: 'red',
+          time: i * 2,
+        })
+      }
+
+      return data;
+    }
+
+    const canvas = document.getElementById('canvas');
+    const video = document.getElementById('video');
+    let data = getData(2)
+
+    barragse = new Barrages({
+      canvas,
+      video,
+      data
+    })
+    // 播放视频，弹幕播放
+    video.addEventListener('play', () => {
+      barragse.isPlay = true;
+      barragse.render()
+    })
+  
+    // 暂停视频，弹幕暂停
+    video.addEventListener('pause', () => {
+      barragse.pause()
+    })
+
+    let option = {
+      color: '#cccccc',
+      fontSize: 26
+    }
+    // 点击发送，插入数据
+    submit.addEventListener('click', () => {
+      option.time = video.currentTime;
+      barragse.setBarrage(option)
+      ipt.value = ''
+    })
+    
+    ipt.addEventListener('change', (event) => {
+      option.value = event.target.value;
+    })
+    colorIpt.addEventListener('change', (event) => {
+      option.color = event.target.value;
+    })
+    fontIpt.addEventListener('change', (event) => {
+      option.fontSize = +event.target.value;
+    })
+  </script>
+</body>
+</html>
