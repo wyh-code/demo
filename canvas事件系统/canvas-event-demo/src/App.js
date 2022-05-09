@@ -12,18 +12,18 @@ function App() {
       data: [
         {
           name: '绿圆',
-          x: 50,
-          y: 50,
-          radius: 20,
+          x: 100,
+          y: 100,
+          radius: 50,
           fillColor: 'green',
           type: 'circle'
         },
         {
           name: '矩形',
-          x: 100,
-          y: 100,
-          width: 50,
-          height: 50,
+          x: 200,
+          y: 200,
+          width: 200,
+          height: 200,
           fillColor: 'red',
           type: 'rect'
         },

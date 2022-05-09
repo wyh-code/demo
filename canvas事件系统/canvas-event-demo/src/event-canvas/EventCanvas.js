@@ -16,9 +16,26 @@ export default class EventCanvas {
 
     // 初始化数据
     this.initData() 
+    
+    // 重置画布样式
+    this.setStyle()
 
     // 绘制元素
     this.draw()
+  }
+
+  setStyle(){
+    const canvas = this.canvas;
+    const devicePixelRatio = window.devicePixelRatio;
+
+    const width = canvas.style.width
+    const height = canvas.style.height;
+
+
+    this.canvas.width = parseInt(width) * devicePixelRatio
+    this.canvas.height = parseInt(height) * devicePixelRatio;
+
+    this.ctx.scale(devicePixelRatio, devicePixelRatio)
   }
 
   initData(){
