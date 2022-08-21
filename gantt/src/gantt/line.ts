@@ -1,10 +1,11 @@
-import { 
-  ITEM_HEIGHT, 
-  LINE_HEIGHT, 
-  LINE_WIDTH,
+import { drawConfig } from './common';
+const { 
+  graduation, 
+  lineWidth, 
+  darkLineColor, 
   lightLineColor, 
-  darkLineColor 
-} from './common'
+  itemHeight  
+} = drawConfig;
 
 /**
  * 获取坐标线数据
@@ -16,27 +17,28 @@ export default function (instance:any){
   const yLine = []
   const xn = []
   // x 轴启始时y坐标（要留出刻度位置）
-  const startX = height - LINE_WIDTH;
+  const startX = height - graduation;
   let y = startX;
+
   while(y > 0){
     xLine.push({
       x: 0,
       y,
       width,
-      height: LINE_HEIGHT,
+      height: lineWidth,
       type: 'rect',
-      fillColor: (height - LINE_WIDTH) == y ? darkLineColor : lightLineColor
+      fillColor: (height - graduation) == y ? darkLineColor : lightLineColor
     })
-    y-=ITEM_HEIGHT;
+    y-=itemHeight;
   }
 
   // y轴
-  for(let x = 0; x < width; x += ITEM_HEIGHT){
+  for(let x = 0; x < width; x += itemHeight){
     yLine.push({
       x,
       y: 0,
-      width: LINE_HEIGHT,
-      height,
+      width: lineWidth,
+      height: startX,
       type: 'rect',
       fillColor: lightLineColor
     })
@@ -45,8 +47,8 @@ export default function (instance:any){
     xn.push({
       x,
       y: startX,
-      width: LINE_HEIGHT,
-      height: LINE_WIDTH,
+      width: lineWidth,
+      height: graduation,
       type: 'rect',
       fillColor: darkLineColor
     })
