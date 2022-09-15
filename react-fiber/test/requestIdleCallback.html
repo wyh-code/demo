@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const channel = new MessageChannel()
+    let pendingCallback;
+    let timeoutTime; // 超时时间
+    let perFrameTime = (1000 / 60); // 每一帧时间
+
+    let timeRemaining = () => perFrameTime - performance.now();
+
+    channel.port2.onmessage = () => {
+      const didTimeout = Date.now() > timeoutTime;
+      if (pendingCallback && (didTimeout || timeRemaining() > 0)) {
+        pendingCallback({ didTimeout, timeRemaining });
+      }
+    }
+    // window.requestIdleCallback = (callback, options={}) => {
+    //   timeoutTime = Date.now() + options.timeout;
+    //   requestAnimationFrame((rafTime) => {
+    //     startTime = Date.now() - rafTime;
+    //     pendingCallback = callback;
+    //     channel.port1.postMessage('hello');
+    //   })
+    // }
+    function sleep(d) {
+      let t = +new Date;
+      console.log('sleep', +new Date, t + d)
+      while(+new Date < t + d){
+        console.log('while')
+      }
+    }
+    sleep(100)
+    requestIdleCallback(({ didTimeout, timeRemaining }) => {
+      console.log(didTimeout, '==didTimeout==')
+      console.log(timeRemaining, '==timeRemaining==')
+      console.log(Date.now(), '==now==')
+    })
+  </script>
+</body>
+
+</html>

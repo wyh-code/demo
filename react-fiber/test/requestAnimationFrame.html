@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAF</title>
+</head>
+
+<body>
+  <div style="background: lightblue;width: 0;height: 20px;"></div>
+  <button>开始</button>
+  <script>
+    /**
+     * requestAnimationFrame(callback) 由浏览器专门为动画提供的API
+     * cancelAnimationFrame(返回值) 清除动画
+     * <16.7 丢帧
+     * >16.7 跳跃 卡顿
+     */
+    const div = document.querySelector('div');
+    const button = document.querySelector('button');
+    let start;
+    function progress() {
+      div.style.width = div.offsetWidth + 1 + 'px';
+      div.innerHTML = (div.offsetWidth) + '%';
+      if (div.offsetWidth < 100) {
+        let current = Date.now();
+        console.log(current - start);
+        start = current;
+        timer = requestAnimationFrame(progress);
+      }
+    }
+    button.onclick = () => {
+      div.style.width = 0;
+      start = Date.now();
+      requestAnimationFrame(progress);
+    }
+  </script>
+</body>
+
+</html>

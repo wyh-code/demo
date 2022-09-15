@@ -11,6 +11,6 @@ function createRoot (root){
   return new ReactDOMRoot(root);
 }
 
-const ReactDOM = {
-  createRoot
-}
+// const ReactDOM = {
+//   createRoot
+// }

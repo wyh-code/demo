@@ -59,7 +59,7 @@ function reconcileChildren(childrenVdom, parentDom){
  * @param {*} container 根节点容器
  */
 function render (vdom, container){
-  sleep(500)
+  // sleep(500)
   const newDom = createDom(vdom)
   if(newDom){
     container.appendChild(newDom); // 插入dom
@@ -68,12 +68,9 @@ function render (vdom, container){
 
 function sleep(wait){
   let time = +new Date;
-
-  while(+new Date < time + wait){
-
-  }
+  while(+new Date < time + wait){}
 }
 
-// let ReactDOM = {
-//   render
-// }
+let ReactDOM = {
+  render
+}

@@ -14,30 +14,11 @@
 
     <script>
       /** render */
-      // ReactDOM.render(vdom, document.getElementById('root'))
+      ReactDOM.render(vdom, document.getElementById('root'))
 
       /** render fiber */
-      const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(vdom);
-
-    
-      let channel = new MessageChannel;
-      
-      channel.port1.postMessage('hello')
-      channel.port2.onmessage = (msg) => {
-        console.log(msg, '=msg')
-      } 
-      setTimeout(() => {
-        console.log('setTimeout1')
-      })
-      channel.port2.postMessage('hello2')
-      console.log('122')
-      Promise.resolve().then(() => {
-        console.log('Promise')
-      })
-      channel.port1.onmessage = (msg) => {
-        console.log(msg, '=msg')
-      } 
+      // const root = ReactDOM.createRoot(document.getElementById('root'));
+      // root.render(vdom);
     </script>
   </body>
 </html>
