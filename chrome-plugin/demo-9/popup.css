@@ -1,0 +1,18 @@
+.popup{
+  width: 200px;
+  padding: 20px;
+}
+
+button{
+  margin-bottom: 10px;
+}
+
+.btn{
+  display: block;
+}
+
+.view{
+  border:1px solid red;
+  padding: 16px;
+}
+

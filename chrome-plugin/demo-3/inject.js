@@ -3,4 +3,4 @@
 console.log('inject');
 
 
-console.log(window.demoName)
+console.log('inject: ', window.demoName)

@@ -1,5 +1,4 @@
 
-
 function injectScript(fileName) {
 	const file_path = chrome.runtime.getURL(fileName)
 	const script = document.createElement("script");
@@ -9,3 +8,5 @@ function injectScript(fileName) {
 }
 // 注入脚本
 injectScript("./inject.js");
+
+console.log('content:', window.demoName)

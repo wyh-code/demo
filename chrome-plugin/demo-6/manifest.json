@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "demo-6",
+  "version": "1.0.0",
+
+  
+  "options_page": "options.html"
+}

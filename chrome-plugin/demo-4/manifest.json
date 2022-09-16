@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "demo-4",
+  "version": "1.0.0",
+ 
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": ["<all_urls>"]
+}
