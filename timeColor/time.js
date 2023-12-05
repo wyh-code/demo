@@ -10,7 +10,6 @@ function getTime() {
 
   const months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30,31]
   months[1] = (Y % 100 && !(Y % 4)) || (!(Y % 100) && !(Y % 400)) ? 29 : 28;
-  console.log(months, '==months==', (Y % 100 && !(Y % 4)) || (!(Y % 100) && !(Y % 400)))
 
   const completion = value => value > 9 ? value : `0${value}`;
 
