@@ -78,7 +78,6 @@ class Barrages {
   setBarrage(data){
     this.data.push(data);
     this.barrages.push(new Barrage(data, this))
-
   }
 
   clear(){

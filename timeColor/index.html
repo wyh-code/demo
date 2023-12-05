@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .container {
+      width: 900px;
+      height: 300px;
+      border: 1px solid red;
+      margin: 50px auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <canvas id="canvas" style="width: 900px;height: 300px;"></canvas>
+  </div>
+
+  <script src="./time.js"></script>
+  <script>
+    const dpr = window.devicePixelRatio;
+    canvas.width = parseInt(canvas.style.width) * dpr;
+    canvas.height = parseInt(canvas.style.height) * dpr;
+    const ctx = canvas.getContext('2d');
+
+    function drawTime() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      const colorInfo = getTimeColor();
+
+      const options = {
+        x: 100,
+        y: 100,
+        spacing: 20,
+        font: '600 40px "PingFang SC"'
+      }
+
+      function draw(config) {
+        const { x, y, spacing, font, value } = config
+
+        ctx.font = font;
+        // 宽度计算应在 ctx.font 设置之后
+        const textMetrics = ctx.measureText(config.value);
+        const w = textMetrics.width;
+        const h = 20;
+        const grd = ctx.createLinearGradient(x, y, x + w, y + h);
+        grd.addColorStop(0, `#${colorInfo.Y.startColor}`);
+        // grd.addColorStop(1, `#ff0000`);
+        grd.addColorStop(1, `#${colorInfo.Y.endColor}`);
+        ctx.fillStyle = grd;
+        ctx.fillText(value, x, y);
+
+        updateOptions(w);
+      }
+
+      function updateOptions(w) {
+        options.x = options.x + options.spacing + w;
+      }
+
+      Object.keys(colorInfo).filter(key => key !== 'time').forEach(key => {
+        const info = colorInfo[key];
+        draw({
+          ...options,
+          ...info,
+        });
+      });
+
+      // 递归
+      window.requestAnimationFrame(drawTime)
+    }
+
+    drawTime()
+  </script>
+</body>
+
+</html>
