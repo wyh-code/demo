@@ -48,14 +48,25 @@ function getTime() {
   }
 }
 
+function packColor(color){
+  const len = 6 - color.length;
+  for(let i = 0; i < len; i++){
+    color = `0${color}`;
+  }
+  return `#${color}`
+}
 
 function getTimeColor(){
   const time = getTime();
   const colorLen = 255 * 255 * 255;
   Object.keys(time).filter(key => key !== 'time').forEach(key => {
-    time[key].startColor = (time[key].start % colorLen).toString(16);
-    time[key].endColor = (time[key].end % colorLen).toString(16);
+    const startColor = (time[key].start % colorLen).toString(16);
+    const endColor = (time[key].end % colorLen).toString(16);
+    time[key].startColor = packColor(startColor);
+    time[key].endColor = packColor(endColor);
   })
+
+  console.log(time)
 
   return time;
 }

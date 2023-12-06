@@ -50,9 +50,8 @@
         const w = textMetrics.width;
         const h = 20;
         const grd = ctx.createLinearGradient(x, y, x + w, y + h);
-        grd.addColorStop(0, `#${colorInfo.Y.startColor}`);
-        // grd.addColorStop(1, `#ff0000`);
-        grd.addColorStop(1, `#${colorInfo.Y.endColor}`);
+        grd.addColorStop(0, config.startColor);
+        grd.addColorStop(1, config.endColor);
         ctx.fillStyle = grd;
         ctx.fillText(value, x, y);
 
