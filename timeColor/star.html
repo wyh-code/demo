@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #canvas {
+      width: 100%;
+      height: 100%;
+      background-image: repeating-radial-gradient(circle at center center,
+          transparent 0px,
+          transparent 6px,
+          rgba(255, 255, 255, 0.05) 6px,
+          rgba(255, 255, 255, 0.05) 13px,
+          transparent 13px,
+          transparent 16px,
+          rgba(255, 255, 255, 0.05) 16px,
+          rgba(255, 255, 255, 0.05) 29px,
+          transparent 29px,
+          transparent 40px,
+          rgba(255, 255, 255, 0.05) 40px,
+          rgba(255, 255, 255, 0.05) 50px),
+        repeating-radial-gradient(circle at center center,
+          rgb(21, 21, 21) 0px,
+          rgb(21, 21, 21) 13px,
+          rgb(21, 21, 21) 13px,
+          rgb(21, 21, 21) 14px,
+          rgb(21, 21, 21) 14px,
+          rgb(21, 21, 21) 15px,
+          rgb(21, 21, 21) 15px,
+          rgb(21, 21, 21) 25px,
+          rgb(21, 21, 21) 25px,
+          rgb(21, 21, 21) 37px,
+          rgb(21, 21, 21) 37px,
+          rgb(21, 21, 21) 42px);
+      background-size: 53px 53px;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    class Star {
+      constructor(options) {
+        this.x = 0;
+        this.y = 0;
+        this.vx = 0;
+        this.vy = 0;
+        this.r = 6;
+        this.R = 12;
+        this.color = [246, 241, 82];
+        this.scale = 1;
+        this.opacity = 1;
+        this.angle = 0;
+        this.va = 0;
+        Object.assign(this, options)
+        this.active = true;
+        return this;
+      }
+      render(ctx) {
+        if (!ctx)
+          throw new Error("context is undefined.");
+        this.ctx = ctx;
+        return this;
+      }
+      draw() {
+        const { color, scale, x, y, ctx, r, R, opacity, angle, va } = this;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(scale, scale);
+        ctx.rotate(angle)
+        ctx.beginPath();
+        for (let i = 0; i < 5; i++) {
+          ctx.lineTo(Math.cos((18 + i * 72) / 180 * Math.PI) * R + R,
+            -Math.sin((18 + i * 72) / 180 * Math.PI) * R + R);
+          ctx.lineTo(Math.cos((54 + i * 72) / 180 * Math.PI) * r + R,
+            -Math.sin((54 + i * 72) / 180 * Math.PI) * r + R);
+        }
+        ctx.closePath();
+        ctx.fillStyle = `rgba(${color[0]},${color[1]},${color[2]},${opacity})`;
+        ctx.fill();
+        ctx.restore();
+        this.x += this.vx;
+        this.y += this.vy;
+        this.opacity -= .022;
+        this.angle += va;
+        if (this.opacity < 0) {
+          this.active = false;
+        }
+        return this;
+      }
+    }
+
+    class Application {
+      constructor() {
+        this.canvas = null;
+        this.ctx = null;
+        this.w = 0;
+        this.h = 0;
+        this.starList = [];
+        this.starColors = [[246, 241, 82], [216, 124, 156]];
+        this.init();
+      }
+      init() {
+        this.canvas = document.getElementById("canvas");
+        this.ctx = this.canvas.getContext("2d");
+        window.addEventListener("resize", this.reset.bind(this));
+        window.addEventListener("mousemove", this._mouseMove.bind(this), this)
+        window.addEventListener("touchmove", this._mouseMove.bind(this), this)
+        this.reset();
+        this.render();
+      }
+      reset() {
+        this.w = this.canvas.width = this.ctx.width = window.innerWidth;
+        this.h = this.canvas.height = this.ctx.height = window.innerHeight;
+      }
+      _mouseMove(e) {
+        let x = e.offsetX || (e.changedTouches[0] && e.changedTouches[0].clientX);
+        let y = e.offsetY || (e.changedTouches[0] && e.changedTouches[0].clientY);
+        this.drawStars(x, y)
+      }
+      render() {
+        this.step();
+      }
+      drawStars(x, y) {
+        for (let i = 0; i < 5; i++) {
+          let vx = (Math.random() * 2) - 1;
+          let vy = (Math.random() * 2) - 1;
+          const { ctx, starColors } = this;
+          this.starList.push(new Star({
+            x,
+            y,
+            vx,
+            vy,
+            va: Math.random() * 0.01 - 0.02,
+            scale: Math.random() * 0.5 + 0.5,
+            color: starColors[~~(Math.random() * starColors.length)]
+          }).render(ctx))
+        }
+      }
+      step(delta) {
+        const { ctx, w, h } = this;
+        requestAnimationFrame(this.step.bind(this));
+        ctx.clearRect(0, 0, w, h);
+        console.log(this.starList, '==this.starList=')
+        this.starList.forEach((star, index) => {
+          star.draw();
+          if (!star.active) {
+            this.starList.splice(index, 1);
+          }
+        })
+      }
+    }
+
+    window.onload = new Application();
+
+  </script>
+</body>
+
+</html>
