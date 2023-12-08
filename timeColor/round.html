@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>图形旋转</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: black;
+      display: flex;
+      vertical-align: middle;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    window.onload = function () {
+      let size = 800;
+      let num = 30;
+
+      let canvas = document.getElementById("canvas");
+      canvas.width = canvas.height = size;
+
+      let ctx = canvas.getContext("2d");
+
+      var center = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+      };
+
+      // 半径
+      let radius = 200;
+      // 初始角度
+      let angle = 0;
+
+      function frame() {
+        window.requestAnimationFrame(frame);
+        // 拖尾效果
+        ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // ctx.fillStyle = "#ff0000";
+        for (let i = 0; i < num; i++) {
+          const deg = Math.PI * 2 / num * i;
+          const x = center.x + radius * Math.cos(deg);
+          const y = center.y + radius * Math.sin(deg);
+
+          // 绘制圆形
+          ctx.beginPath();
+          ctx.arc(
+            x,
+            y,
+            size / 4,
+            angle + deg,
+            Math.PI + angle + deg,
+            false
+          );
+          ctx.lineWidth = 3;
+
+          ctx.strokeStyle = "hsl(" + angle * 60 + "deg, 80%, 30%)";
+          ctx.stroke();
+
+          angle += 0.008;
+        }
+      };
+
+      frame()
+    };
+  </script>
+  
+</body>
+
+</html>
