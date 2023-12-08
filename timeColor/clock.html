@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    *{margin: 0; padding: 0;}
+    body {background: #000; overflow: hidden;}
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <script>
+
+class Ring {
+	x;
+	y;
+	deg;
+	r;
+	vd;
+	color;
+	dx;
+	dy;
+	ctx;
+	constructor(w, h, textWidth, ctx) {
+		this.x = w / 2;
+		this.y = h / 2;
+		this.deg = Math.random() * Math.PI * 2;
+    // 半径加数字间隙
+		this.r = Math.random() * 10 | 0 + textWidth * 5;
+		this.vd = Math.random() * Math.PI * 2 / 360 + 0.01;
+		this.color = `hsl(${Math.random() * 360 | 0}, 80%, 50%)`;
+		this.dx = this.r * Math.cos(this.deg) + this.x;
+		this.dy = this.r * Math.sin(this.deg) + this.y;
+		this.ctx = ctx;
+	}
+	update() {
+		this.deg += this.vd;
+		this.deg = this.deg % (Math.PI * 2);
+		this.dx = this.r * Math.cos(this.deg) + this.x;
+		this.dy = this.r * Math.sin(this.deg) + this.y;
+	}
+	draw() {
+		this.ctx.beginPath();
+		this.ctx.arc(this.dx, this.dy, 1, 0, Math.PI * 2);
+		this.ctx.fillStyle = this.color;
+		this.ctx.fill();
+	}
+}
+
+class Priticle {
+	x;
+	y;
+	sx;
+	sy;
+	tx;
+	ty;
+	color;
+	age;
+	ctx;
+	constructor(x, y, tx, ty, ctx, color = 'gray',) {
+		this.x = x;
+		this.y = y;
+		this.sx = (tx - x) / 100;
+		this.sy = (ty - y) / 100;
+		this.tx = tx;
+		this.ty = ty;
+		this.color = color;
+		this.age = 100;
+		this.ctx = ctx;
+	}
+	update() {
+		this.age--;
+		if (this.age >= 0) {
+			this.x += this.sx;
+			this.y += this.sy;
+		}
+	}
+	draw() {
+		this.ctx.beginPath();
+		this.ctx.fillStyle = this.color;
+		this.ctx.arc(this.x, this.y, 1, 0, Math.PI * 2);
+		this.ctx.fill();
+	}
+}
+
+class Clock {
+	canvas;
+	ctx;
+	rings;
+	priticles;
+	numbers;
+	last;
+	colors;
+	constructor() {
+		this.canvas = document.getElementById('canvas');
+		this.ctx = this.canvas.getContext('2d');
+		this.canvas.width = innerWidth;
+		this.canvas.height = innerHeight;
+		this.rings = [];
+		this.priticles = [];
+		this.numbers = [];
+    this.power = 4;
+		this.last = '';
+		this.colors = ['#1e90ff', '#1e90ff', '#ffa502', '#ffa502', '#2ed573', '#2ed573'];
+
+		this.init();
+	}
+	init() {
+		
+		this.initText();
+    this.initRings()
+		this.animate();
+		this.startTime();
+	}
+	initText() {
+    const maxTextLen = [];
+    const maxTextHeight = [];
+    const maxTextWidth = [];
+		for (let i = 0; i < 10; i++) { //循环0-9
+      
+			this.ctx.font = `60px Arial`; //设置字体及字型
+      this.ctx.textBaseline="bottom";
+      const textMetrics = this.ctx.measureText(i.toString());
+      let width = Math.round(textMetrics.width); //获取span的尺寸
+      let height = Math.round(textMetrics.fontBoundingBoxAscent + textMetrics.fontBoundingBoxDescent + textMetrics.alphabeticBaseline);
+			this.ctx.fillText(i.toString(), 0, height); //根据获得的字型高度写入画布
+			let data = this.ctx.getImageData(0, 0, width, height).data; //根据获得的span尺寸截取画布信息
+			let len = data.length; //获取数组长度
+			let tdata = []; //创建储存单个字符的数组
+			for (let j = 0; j < len / 4; j++) { //按照每四个数字对应一个像素信息的方法遍历所有像素
+				if (data[j * 4 + 3] != 0) { //如果这个像素不是全透明的话则记录像素的坐标
+					let x = j % width | 0;
+					let y = j / width | 0;
+					tdata.push({ //将像素坐标作为对象存入数组
+						x: x,
+						y: y
+					});
+				}
+			}
+
+      this.numbers.push(tdata); //将对应字符的坐标数据存入数组
+			this.ctx.clearRect(0, 0, width, height); //清理画布
+      // 保存数字信息
+      maxTextLen.push(tdata.length);
+      maxTextHeight.push(height);
+			maxTextWidth.push(width);
+		}
+
+    this.ringsLen = Math.max(...maxTextLen)
+    this.textHeight = Math.max(...maxTextHeight)
+    this.textWidth = Math.round(...maxTextWidth) * this.power;
+	}
+  initRings(){
+    for (let i = 0; i < this.ringsLen; i++) {
+			this.rings.push(new Ring(this.canvas.width, this.canvas.height, this.textWidth, this.ctx));
+		}
+  }
+  initClock() {
+		let now = this.currentClock();
+    console.log(this.textWidth, '--this.textWidth-')
+    
+		for (let i in now) {
+      const space = (Math.floor(i / 2) + 1) * this.textWidth;
+			const color = this.colors[i];
+      const number = this.numbers[now[i]];
+			for (let j in number) {
+				let n = number[j];
+				let r = this.rings[j];
+				if (now[i] !== this.last[i]) {
+         
+					this.priticles.push(
+						new Priticle(
+							r.dx,
+							r.dy,
+              // 0,0,
+              n.x * this.power + (this.canvas.width / 2 - this.textWidth * 5) + space + (this.textWidth * i),
+              n.y * this.power + this.canvas.height / 2 - this.textHeight * 2,
+							this.ctx,
+							color,
+						)
+					)
+				} else {
+					this.priticles.push(
+						new Priticle(
+              n.x * this.power + space + (this.textWidth * i) + (this.canvas.width / 2 - this.textWidth * 5),
+              n.y * this.power + this.canvas.height / 2 - this.textHeight * 2,
+              n.x * this.power + space + (this.textWidth * i) + (this.canvas.width / 2 - this.textWidth * 5),
+              n.y * this.power + this.canvas.height / 2 - this.textHeight * 2,
+							this.ctx,
+							color,
+						)
+					)
+				}
+			}
+		}
+		this.last = now;
+	}
+	draw() {
+		this.ctx.fillStyle = `rgba(0, 0, 0, 0.1)`;
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.fillStyle = `rgba(255, 0, 0, 1)`;
+    this.ctx.fillRect(0, this.canvas.height / 2 -1, this.canvas.width, 3);
+		for (let i in this.rings) {
+			const r = this.rings[i];
+			r.update();
+			r.draw();
+		}
+		for (let i in this.priticles) {
+			const p = this.priticles[i];
+			p.update();
+			p.draw();
+			if (p.age === -50) {
+				this.priticles.splice(+i, 1);
+			}
+		}
+	}
+	startTime() {
+		setInterval(() => this.initClock(), 1000);
+	}
+	animate() {
+		requestAnimationFrame(() => this.animate());
+		this.draw();
+	}
+	currentClock() {
+		const d = new Date();
+		return ('0' + d.getHours()).slice(-2) + ('0' + d.getMinutes()).slice(-2) + ('0' + d.getSeconds()).slice(-2);
+	}
+}
+
+new Clock();
+  </script>
+</body>
+</html>
