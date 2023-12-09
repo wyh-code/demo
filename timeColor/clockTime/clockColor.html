@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .container {
+      width: 900px;
+      height: 300px;
+      border: 1px solid red;
+      margin: 50px auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <canvas id="canvas" style="width: 900px;height: 300px;"></canvas>
+  </div>
+  <script src="./util.js"></script>
+  <script src="./time.js"></script>
+  <script src="./index.js"></script>
+
+  <!-- <script>
+    const dpr = window.devicePixelRatio;
+    canvas.width = parseInt(canvas.style.width) * dpr;
+    canvas.height = parseInt(canvas.style.height) * dpr;
+    // 初始角度
+    let angle = 0;
+    const defaultColor = "#ff0000";
+    // const defaultColor = "hsl(" + angle * 60 + "deg, 80%, 30%)";
+    const ctx = canvas.getContext('2d');
+
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const height = canvas.height;
+    const width = canvas.width;
+    // 中线
+    ctx.fillStyle = defaultColor;
+		ctx.fillRect(0, height / 2 - 1, width, 2);
+
+    // 半径
+    const space = 20; // 距离画布边缘距离
+    let radius = Math.min(height, width) / 2 - space;
+    
+    const clockCenter = {
+      y: height / 2,
+      x: radius + 20
+    }
+
+
+    function drawClockBorder(radius){
+      ctx.beginPath();
+      ctx.arc(
+        clockCenter.x,
+        clockCenter.y,
+        radius,
+        deg(20),
+        deg(340),
+        false
+      );
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = defaultColor;
+      ctx.stroke();
+
+      // 确定未闭合角度弦长
+      const chordY = Math.round(Math.sin(deg(20)) * radius);
+      const chordX = Math.round(Math.cos(deg(20)) * radius);
+      const diff = radius - chordX;
+
+      // 确定圆弧线终点坐标
+      const endY = Math.round(clockCenter.y - chordY);
+      const endX = Math.round(clockCenter.x + chordX);
+
+      // 确定过度弧线的终点坐标
+      const transitionY = clockCenter.y - chordY / 2
+      const transitionX = clockCenter.x + radius + (radius - chordX);
+      console.log(endY, clockCenter.y, chordY, transitionY)
+      // 确定
+      return {
+        endX,
+        endY,
+        diff,
+        transitionX,
+        transitionY
+      }
+    }
+
+    function drawClockRing(yearRing){
+      for(let i = 0; i < yearRing.length; i++){
+        const ring = yearRing[i];
+        ring.draw();
+        // console.log(ring, '==ring==')
+      }
+      console.log('--drawClockRing--')
+      // requestAnimationFrame(() => drawClockRing(yearRing))
+    }
+
+    // 绘制圆形
+    // const year = drawClockBorder(radius)
+    // const month = drawClockBorder(radius - space / 2)
+    // const day = drawClockBorder(radius - space)
+
+    // 绘制时间环
+    const yearRing = getYearRing(ctx, clockCenter.x, clockCenter.y, radius - space * 2);
+    drawClockRing(yearRing);
+    // console.log(clockCenter, '==clockCenter==', year, month, day)
+
+    /**
+     *  确定最终过度终点
+     *  为防止过度弧线中途相交，x，y均应取最大值
+    */
+    // const transitionX = Math.max(year.transitionX, month.transitionX, day.transitionX);
+    // const transitionY = Math.max(year.transitionY, month.transitionY, day.transitionY);
+    // const diff = Math.max(year.diff, month.diff, day.diff);
+    // // 绘制过度弧线
+    // function quadraticCurveTo(strokeStyle, startX, startY, cX, cY, endX, endY){
+    //   ctx.strokeStyle = strokeStyle;
+    //   ctx.beginPath();
+    //   ctx.moveTo(startX, startY);
+    //   ctx.quadraticCurveTo(cX, cY, endX, endY);
+    //   ctx.stroke();
+    // }
+   
+    // // const cx = 
+    // // 确定过度弧线控制点坐标
+    // quadraticCurveTo(defaultColor, year.endX, year.endY, year.endX + diff, transitionY, transitionX, transitionY);
+    // quadraticCurveTo(defaultColor, month.endX, month.endY, month.endX + diff, transitionY, transitionX, transitionY);
+    // quadraticCurveTo(defaultColor, day.endX, day.endY, day.endX + diff, transitionY, transitionX, transitionY);
+
+
+  </script> -->
+</body>
+
+</html>
