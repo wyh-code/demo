@@ -1,5 +1,22 @@
 
-function getDays (){
+function getMonths() {
+  const date = new Date;
+  const Y = date.getFullYear();
+
+  const months = [];
+  for (let i = 0; i < 12; i++) {
+    const month = +new Date(Y, i, 1, 0, 0, 0);
+    months.push({
+      time: month,
+      date: (new Date(month)).toLocaleString(),
+      color: packColor(month)
+    })
+  }
+
+  return months;
+}
+
+function getWeeks() {
   const date = new Date;
   const Y = date.getFullYear();
   const M = date.getMonth();
@@ -8,66 +25,63 @@ function getDays (){
   const m = date.getMinutes();
   const s = date.getSeconds();
 
-  const day = 24 * 60 * 60 * 1000;
-  const start = +new Date(Y, 0, 1, 0, 0, 0);
+  const week = 24 * 60 * 60 * 1000 * 7;
 
-  const days = [];
-  let yesterday = start;
-
-  for(let i = 0; i < 365; i++){
-    days.push({
-      time: yesterday,
-      date: (new Date(yesterday)).toLocaleString(),
-      color: packColor(yesterday)
-    })
-    yesterday = yesterday + day;
+  // 循环找到第一个周日
+  let startDate = new Date(Y, 0, 1, 0, 0, 0);
+  while (startDate.getDay() !== 0) {
+    startDate.setDate(startDate.getDate() + 1);
   }
 
-  return days;
-}
+  const startWeek = +(new Date(Y, 0, startDate.getDate(), 0, 0, 0));
+  const weeks = [];
+  let lastWeek = startWeek;
 
-function Ring (options) {
-  Object.assign(this, options);
-  this.deg = Math.random() * options.degRang + options.gap;
-  // 角速度
-  this.vd = Math.random() * Math.PI * 2 / 360 + 0.01;
-  this.dx = this.r * Math.cos(this.deg) + this.x;
-	this.dy = this.r * Math.sin(this.deg) + this.y;
-  this.r = this.r + Math.random() * options.ringWidth | 0;
-
-  this.draw = function(i){
-    this.update();
-    console.log('---draw----',i)
-
-    // this.ctx.beginPath();
-    // this.ctx.arc(this.dx, this.dy, this.pointRadius, 0, Math.PI * 2);
-    // this.ctx.fillStyle = this.color;
-    // this.ctx.fill();
+  for (let i = 0; i < 53; i++) {
+    if ((new Date(lastWeek)).getFullYear() === Y) {
+      weeks.push({
+        time: lastWeek,
+        date: (new Date(lastWeek)).toLocaleString(),
+        color: packColor(lastWeek)
+      })
+      lastWeek = lastWeek + week;
+    }
   }
 
-  this.update = function(){
-    console.log('update ring');
-    // this.deg += this.vd;
-    // this.dx = this.r * Math.cos(deg(this.deg)) + this.x;
-    // this.dy = this.r * Math.sin(deg(this.deg)) + this.y;
-  }
+  return weeks;
 }
 
 
-function getYearRing(ctx, x, y, radius,pointRadius=1, startDeg=0, endDeg=360, ringWidth=10){
-  const days = getDays();
+function getRing(options) {
+  const { type, clockwise=true, vdPower=1, pointRadius = 1, startDeg = 0, endDeg = 360, ringWidth = 10 } = options;
+  let rings = [];
+  switch (type) {
+    case 'year':
+      break;
+    case 'month':
+      rings = getMonths();
+      break;
+    case 'week':
+      rings = getWeeks();
+      break;
+  }
+  const dpr = window.devicePixelRatio;
   const degRang = Math.abs(endDeg - startDeg);
-  console.log(degRang, '==degRang=')
-  for(let i = 0; i < days.length; i++){
-    const day = days[i];
+  for (let i = 0; i < rings.length; i++) {
+    const day = rings[i];
     const ring = new Ring({
+      ...options,
       ...day,
-      degRang, 
-      gap: (360 - degRang) / 2, 
-      ctx, x, y, r: radius, pointRadius, ringWidth
+      length: rings.length,
+      i,
+      vdPower,
+      clockwise,
+      degRang,
+      gap: (360 - degRang) / 2,
+      pointRadius, ringWidth, dpr
     });
-    days.splice(i, 1, ring);
+    rings.splice(i, 1, ring);
   }
 
-  return days;
+  return rings;
 }
