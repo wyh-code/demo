@@ -1,17 +1,24 @@
 
 const path = require('path');
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 
 const createWindow = () => {
   const win = new BrowserWindow({
+    show: false,
     width: 600,
     height: 400,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      enableRemoteModule: true,
     }
   })
 
   win.loadFile('./index.html');
+
+  win.on('ready-to-show', () => {
+    win.show();
+  })
 
   // 打开控制台
   win.webContents.openDevTools();
@@ -68,5 +75,11 @@ app.whenReady().then(() => {
      * 通常Windows，Linux在关闭所有窗口后会退出应用，macOS则不会退出应用，所以再次打开需要创建新窗口
      */
     if(!BrowserWindow.getAllWindows().length) createWindow();
+  })
+
+  // 监听渲染进程事件
+  ipcMain.on('create-new-window', async () => {
+    console.log('btn click')
+    createWindow()
   })
 });
